@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daily Update Web App</title>
+    <style>
+        body {
+            background-image: url("/static/background.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 50px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+            width: 600px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        input[type="submit"], .copy-button {
+            padding: 10px 15px;
+            margin-top: 10px;
+        }
+        .copy-button {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #999;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Add Entry</h2>
+    <form method="POST">
+        Ticket Number: <input type="text" name="ticket"><br>
+        Comment: <input type="text" name="comment"><br>
+        Hours: <input type="text" name="hours"><br>
+        <input type="submit" value="Add Entry">
+    </form>
+
+    <h3>Entries:</h3>
+    <table>
+        <tr><th>#</th><th>Ticket</th><th>Comment</th><th>Hours</th></tr>
+        {% for entry in entries %}
+        <tr>
+            <td>{{ entry[0] }}</td>
+            <td>{{ entry[1] }}</td>
+            <td>{{ entry[2] }}</td>
+            <td>{{ entry[3] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <button class="copy-button" onclick="copyMarkdown()">Copy Markdown to Clipboard</button>
+    <textarea id="markdownText" style="display:none;"></textarea>
+</div>
+
+<script>
+    async function copyMarkdown() {
+        const response = await fetch('/markdown');
+        const text = await response.text();
+        const stripped = text.replace(/<pre>|<\/pre>/g, '');
+        const temp = document.getElementById("markdownText");
+        temp.value = stripped;
+        temp.style.display = "block";
+        temp.select();
+        document.execCommand("copy");
+        temp.style.display = "none";
+        alert("Markdown copied to clipboard!");
+    }
+</script>
+</body>
+</html>
