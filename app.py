@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, redirect, url_for
 from datetime import datetime
 from io import BytesIO
 import os
@@ -63,16 +63,12 @@ def download_markdown():
 
     return send_file(buffer, as_attachment=True, download_name="daily_update.md", mimetype='text/markdown')
 
-from flask import Flask, render_template, request, send_file, redirect, url_for
-# (already in your imports if you added it earlier)
-
 @app.route('/clear', methods=['POST'])
 def clear_entries():
     global entries, additional_comments
     entries = []
     additional_comments = ""
     return redirect(url_for('index'))
-
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
