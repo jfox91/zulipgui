@@ -12,13 +12,13 @@ def index():
     global additional_comments
 
     if request.method == 'POST':
-        ticket = request.form['ticket']
-        priority = request.form['priority']
-        comment = request.form['comment']
-        hours = request.form['hours']
-        additional_comments = request.form['additional_comments']
+        ticket = request.form.get('ticket', '').strip()
+        priority = request.form.get('priority', 'Medium')
+        comment = request.form.get('comment', '')
+        hours = request.form.get('hours', '')
+        additional_comments = request.form.get('additional_comments', '')
 
-        if ticket.lower() == "none":
+        if ticket.lower() == "none" or ticket == "":
             ticket_text = "No ticketed work"
         else:
             ticket_text = f"[INFRA2-{ticket}](https://eagleeyenetworks.atlassian.net/browse/INFRA2-{ticket})"
@@ -63,13 +63,13 @@ def download_markdown():
 
     return send_file(buffer, as_attachment=True, download_name="daily_update.md", mimetype='text/markdown')
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
-
-@app.route('/clear', methods=['POST'])
+@app.route('/clear', methods=['GET', 'POST'])
 def clear_entries():
     global entries, additional_comments
     entries = []
     additional_comments = ""
     return render_template('index.html', entries=entries, additional_comments=additional_comments)
+
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
