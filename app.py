@@ -63,12 +63,16 @@ def download_markdown():
 
     return send_file(buffer, as_attachment=True, download_name="daily_update.md", mimetype='text/markdown')
 
-@app.route('/clear', methods=['GET', 'POST'])
+from flask import Flask, render_template, request, send_file, redirect, url_for
+# (already in your imports if you added it earlier)
+
+@app.route('/clear', methods=['POST'])
 def clear_entries():
     global entries, additional_comments
     entries = []
     additional_comments = ""
-    return render_template('index.html', entries=entries, additional_comments=additional_comments)
+    return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
